@@ -1,0 +1,133 @@
+$primary-color: #003580;
+
+.header {
+  background: $primary-color;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  .headercontainer {
+    width: 100%;
+    max-width: 1024px;
+    margin: 20px 0 100px 0;
+
+    .headerlist {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 50px;
+
+      .headerlistitem {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        &.active {
+          border: 1px solid white;
+          padding: 10px;
+          border-radius: 20px;
+        }
+      }
+    }
+
+    .headerdesc {
+      margin: 20px 0;
+    }
+    .headerbutton {
+      background: #0071c2;
+      color: #fff;
+      font-weight: 500;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .headersearch {
+      height: 30px;
+      background: #fff;
+      border: 3px solid #febb02;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 20px 0;
+      border-radius: 5px;
+      position: absolute;
+      bottom: -25px;
+      width: 100%;
+      max-width: 1024px;
+      i {
+        color: lightgray;
+      }
+
+      &item {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        .headersearchinput {
+          border: none;
+          outline: none;
+        }
+        .headersearchtext {
+          color: lightgray;
+          cursor: pointer;
+        }
+
+        .date {
+          position: absolute;
+          top: 50px;
+          z-index: 2;
+        }
+
+        .options {
+          position: absolute;
+          top: 50px;
+            z-index: 2;
+          background-color: #fff;
+          color: gray;
+          border-radius: 5px;
+          -webkit-box-shadow: 0px 0px 5px 3px rgba(0,0,0,0.75);
+          -moz-box-shadow: 0px 0px 5px 3px rgba(0,0,0,0.75);
+          box-shadow: 0px 0px 5px 3px rgba(0, 0, 0, 0.13);
+
+          &item {
+
+                width: 200px;
+                display: flex;
+                justify-content: space-between;
+                margin: 10px;
+
+            .optionstext {
+            }
+
+
+            .optioncounter{
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 12px;
+                color: #000;
+                &button{
+                    width: 30px;
+                    height: 30px;
+                    border: none;
+                    background: none;
+                    cursor: pointer;
+                    font-size: 20px;
+                    color: #000;
+                    border: 1px solid #0071c2;
+                    &:disabled{
+                        color: lightgray;
+                        border: 1px solid lightgray;
+                        cursor: not-allowed;
+                    }
+                }
+            }
+
+
+
+          }
+        }
+      }
+    }
+  }
+}
