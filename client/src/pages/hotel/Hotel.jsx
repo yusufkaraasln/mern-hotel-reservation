@@ -4,6 +4,10 @@ import Header from "../../components/header/Header";
 import Footer from "../../components/footer/Footer";
 import MailList from "../../components/mailList/MailList";
 import "./hotel.scss";
+import useFetch from "../../hooks/useFetch";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import Reserve from "../../components/reserve/Reserve";
 function Hotel() {
   const images = [
     "https://t-cf.bstatic.com/xdata/images/hotel/max1024x768/330614265.jpg?k=268bdf9f9fb7a3d0ef2f61d63285d184afcae93db5573d406ae446ec34200ff7&o=&hp=1",
@@ -20,12 +24,14 @@ function Hotel() {
   const handleOpenModal = (i) => {
     setShowModal(true);
     setCurrentImage(i);
-
-
   };
 
-  const handleChange = (route) => {
+  const location = useLocation().pathname.split("/")[2];
+  console.log(location);
 
+  const { data } = useFetch("/hotels/find/" + location);
+
+  const handleChange = (route) => {
     if (route === "left") {
       if (currentImage === 0) {
         setCurrentImage(images.length - 1);
@@ -39,17 +45,41 @@ function Hotel() {
         setCurrentImage(currentImage + 1);
       }
     }
+  };
 
-  }
+  const search = useSelector((state) => state.search);
+  console.log(search);
+
+  const milliseconds = 1000 * 60 * 60 * 24;
+  const dateCalculator = (date1, date2) => {
+    const timediff = Math.abs(date1.getTime() - date2.getTime());
+    const diffDays = Math.ceil(timediff / milliseconds);
+    return diffDays;
+  };
+
+  const days = dateCalculator(search.date[0].startDate, search.date[0].endDate);
+  const user = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const [openModal, setOpenModal] = React.useState(false);
+  const handleClick = () => {
+    if (user !== null) {
+      setOpenModal(true);
+
+    
+    
+    } else {
+      navigate("/login");
+    }
+  };
 
   return (
     <div>
-      {
-       !showModal &&  <>
+      {!showModal && (
+        <>
           <Navbar />
           <Header type="list" />
         </>
-      }
+      )}
       <div className="hotelContainer">
         {showModal && (
           <div className="slider">
@@ -61,7 +91,6 @@ function Hotel() {
                 right: "30px",
                 fontSize: "30px",
                 cursor: "pointer",
-
               }}
               onClick={() => setShowModal(false)}
             ></i>
@@ -71,38 +100,39 @@ function Hotel() {
                 left: "30px",
                 fontSize: "30px",
                 cursor: "pointer",
-
               }}
-            class="fa-solid fa-angle-left" onClick={()=>handleChange("left")}></i>
+              class="fa-solid fa-angle-left"
+              onClick={() => handleChange("left")}
+            ></i>
 
             <div className="sliderWrapper">
               <img src={images[currentImage]} alt="" />
             </div>
 
             <i
-               style={{
+              style={{
                 position: "absolute",
                 right: "30px",
                 fontSize: "30px",
                 cursor: "pointer",
-                
               }}
-            
-            class="fa-solid fa-angle-right" onClick={()=>handleChange("right")}></i>
+              class="fa-solid fa-angle-right"
+              onClick={() => handleChange("right")}
+            ></i>
           </div>
         )}
 
         <div className="hotelContainerWrapper">
-          <button className="hotelContainerWrapperButton">
+          <button onClick={handleClick} className="hotelContainerWrapperButton">
             Rezervasyon yap veya şimdi kirala
           </button>
-          <h1 className="hotelContainerWrapperTitle">Ramada by Wyndham</h1>
+          <h1 className="hotelContainerWrapperTitle">{data.name}</h1>
           <div className="hotelContainerWrapperAddress">
             <i class="fa-solid fa-location-dot"></i>
-            <span>Mecidiyeköy, Ulubatlı Sk.</span>
+            <span>{data.address}</span>
           </div>
           <span className="hotelContainerWrapperDistance">
-            Mükammel konum - 0,1 km
+            Mükammel konum - {data.distance} km
           </span>
           <span className="hotelContainerWrapperPrice">
             Eksta 183 ₺ ödeyin, taksi sizi havaalanından ücretsiz olarak alsın.
@@ -123,37 +153,40 @@ function Hotel() {
           <div className="hotelContainerWrapperDetails">
             <div className="hotelContainerWrapperDetailsTexts">
               <h1 className="hotelContainerWrapperDetailsTextsTitle">
-                Mecidiyeköyün kalbinde yaşam
+                {data.title}
               </h1>
               <p className="hotelContainerWrapperDetailsTextsDesc">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Asperiores accusantium placeat saepe vero amet, autem in.
-                Laborum voluptatibus porro ea autem animi dolores similique eos
-                veritatis impedit, saepe tenetur iusto, ratione error est magni
-                officia hic! Magni eligendi necessitatibus pariatur rerum
-                doloremque. Vitae perferendis non eos, quasi laborum esse ad?
+                {data.desc}
               </p>
             </div>
 
             <div className="hotelContainerWrapperDetailsPricing">
-              <h1>9 gece için mükemmel fiyat</h1>
+              <h1>{days} gece için mükemmel fiyat</h1>
               <span>
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
                 Molestiae, temporibus?
               </span>
               <h2>
-                <b>40.234₺</b> (9 gece)
+                <b>{data.cheapestPrice * days * search.options.room}₺</b> (
+                {days} gece)
               </h2>
               <button>Rezervasyon yap veya şimdi Kirala !</button>
             </div>
           </div>
         </div>
-        {
-          !showModal && <>
-          <MailList />
-        <Footer /></>
-        }
+        {!showModal && (
+          <>
+            <MailList />
+            <Footer />
+          </>
+        )}
       </div>
+          {
+            openModal && <Reserve setOpen={setOpenModal}
+              hotelID={location}
+            />
+          }
+
     </div>
   );
 }

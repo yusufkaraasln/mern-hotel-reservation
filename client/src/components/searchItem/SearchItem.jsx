@@ -1,6 +1,7 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./searchItem.scss";
-function SearchItem() {
+function SearchItem({item}) {
   return (
     <div className="searchItem">
       <img
@@ -9,13 +10,13 @@ function SearchItem() {
         alt=""
       />
       <div className="searchItemDesc">
-        <h1 className="searchItemDescTitle">Tower Streets Apertmenat</h1>
-        <span className="searchItemDescDistance">Merkeze 500m</span>
+        <h1 className="searchItemDescTitle">{item.name}</h1>
+        <span className="searchItemDescDistance">Merkeze {item.distance}m</span>
         <span className="searchItemDescTaxiOp">Ücretsiz Taksi</span>
         <span className="searchItemDescSubtitle">Klimali studio daire</span>
 
         <span className="searchItemDescFeatures">
-          1 banyo * 1 yatak odası * 23 m2
+          {item.desc}
         </span>
         <span className="searchItemDescCancelOp">Ücretsiz iptal</span>
         <span className="searchItemDescOpSubtitle">
@@ -27,12 +28,15 @@ function SearchItem() {
 
             <div className="searchItemDetailsRating">
                 <span>Mükemmel</span>
-                <button>9.2</button>
+                <button>{item.rating}</button>
             </div>
             <div className="searchItemDetailsTexts">
-                <span className="searchItemDetailsTextPrice">1.745₺</span>
+                <span className="searchItemDetailsTextPrice">{item.cheapestPrice}₺</span>
                 <span className="searchItemDetailsTextOp">Vergi ve Ücretler Dahil</span>
+                <Link to={`/hotels/${item._id}`}>
                 <button className="searchItemDetailsTextButton">Yer Durumuna Bak</button>
+                
+                </Link>
             </div>
 
       </div>

@@ -1,3 +1,5 @@
+const Hotel = require("../models/Hotel");
+
 const createHotel = async (req, res, next) => {
   const newHotel = new Hotel(req.body);
   try {
@@ -9,8 +11,12 @@ const createHotel = async (req, res, next) => {
 };
 
 const getHotels = async (req, res, next) => {
+  const { max, min, ...others } = req.query;
   try {
-    const hotel = await Hotel.find();
+    const hotel = await Hotel.find({
+      ...others,
+      cheapestPrice: { $gte: min || 1, $lte: max || 99999999 },
+    }).limit(req.query.limit);
     res.status(200).json(hotel);
   } catch (error) {
     next(error);
@@ -48,6 +54,39 @@ const deleteHotel = async (req, res, next) => {
     next(error);
   }
 };
+const countByCity = async (req, res, next) => {
+  const cities = req.query.cities.split(",");
+
+  try {
+    const list = await Promise.all(
+      cities.map((city) => {
+        return Hotel.countDocuments({ city: city });
+      })
+    );
+    res.status(200).json(list);
+  } catch (error) {
+    next(error);
+  }
+};
+const countByType = async (req, res, next) => {
+  try {
+    const hotel = await Hotel.countDocuments({ type: "hotel" });
+    const apartment = await Hotel.countDocuments({ type: "apartment" });
+    const resort = await Hotel.countDocuments({ type: "resort" });
+    const villa = await Hotel.countDocuments({ type: "villa" });
+    const cabin = await Hotel.countDocuments({ type: "cabin" });
+
+    res.status(200).json([
+      { name: "hotel", value: hotel },
+      { name: "apartment", value: apartment },
+      { name: "resort", value: resort },
+      { name: "villa", value: villa },
+      { name: "cabin", value: cabin },
+    ]);
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   createHotel,
@@ -55,4 +94,6 @@ module.exports = {
   getHotel,
   updateHotel,
   deleteHotel,
+  countByCity,
+  countByType,
 };

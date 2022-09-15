@@ -1,17 +1,30 @@
-const { createHotel, getHotel, updateHotel, getHotels, deleteHotel } = require("../controllers/hotel");
-const Hotel = require("../models/Hotel");
+const {
+  createHotel,
+  getHotel,
+  updateHotel,
+  getHotels,
+  deleteHotel,
+  countByCity,
+  countByType,
+} = require("../controllers/hotel");
+const { getHotelRooms } = require("../controllers/room");
+
+const { verifyAdmin } = require("../utils/verifyToken");
 
 const router = require("express").Router();
 
-router.post("/", createHotel);
+router.post("/", verifyAdmin, createHotel);
 
-router.put("/:id", updateHotel );
+router.put("/:id", verifyAdmin, updateHotel);
 
-router.get("/",getHotels);
+router.get("/", getHotels);
 
 //get a hotel
-router.get("/:id", getHotel);
+router.get("/find/:id", getHotel);
+router.get("/countByCity", countByCity);
+router.get("/countByType", countByType);
+router.get("/room/:id", getHotelRooms);
 
-router.delete("/:id",deleteHotel);
+router.delete("/:id", verifyAdmin, deleteHotel);
 
 module.exports = router;

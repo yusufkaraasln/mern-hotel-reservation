@@ -1,64 +1,33 @@
 import React from "react";
+import useFetch from "../../hooks/useFetch";
 import "./fprops.scss";
 function FeaturesProps() {
+  const { data, isPending, error } = useFetch("/hotels/?max=1000&min=300&limit=4");
+
   return (
     <div className="fp">
-      <div className="fpItem">
-        <img
-          src="https://t-cf.bstatic.com/xdata/images/hotel/square200/177954582.webp?k=d67fb9245e8cf926fc217ffdfa86be220d76728e4c2f3e72b904639e705da70a&o=&s=1"
-          alt=""
-          className="fpItemImg"
-        />
-        <span className="fpItemName">Eden Hotel Amsterdam</span>
-        <span className="fpItemCity">Amsterdam</span>
-        <span className="fpItemPrice">Başlangıç fiyatı - 1.754 ₺</span>
-        <div className="fpItemRating">
-          <button>8.3</button>
-          <span>Çok İyi</span>
-        </div>
-      </div>
-      <div className="fpItem">
-        <img
-          src="https://t-cf.bstatic.com/xdata/images/hotel/square200/177954582.webp?k=d67fb9245e8cf926fc217ffdfa86be220d76728e4c2f3e72b904639e705da70a&o=&s=1"
-          alt=""
-          className="fpItemImg"
-        />
-        <span className="fpItemName">Eden Hotel Amsterdam</span>
-        <span className="fpItemCity">Amsterdam</span>
-        <span className="fpItemPrice">Başlangıç fiyatı - 1.754 ₺</span>
-        <div className="fpItemRating">
-          <button>8.3</button>
-          <span>Çok İyi</span>
-        </div>
-      </div>
-      <div className="fpItem">
-        <img
-          src="https://t-cf.bstatic.com/xdata/images/hotel/square200/177954582.webp?k=d67fb9245e8cf926fc217ffdfa86be220d76728e4c2f3e72b904639e705da70a&o=&s=1"
-          alt=""
-          className="fpItemImg"
-        />
-        <span className="fpItemName">Eden Hotel Amsterdam</span>
-        <span className="fpItemCity">Amsterdam</span>
-        <span className="fpItemPrice">Başlangıç fiyatı - 1.754 ₺</span>
-        <div className="fpItemRating">
-          <button>8.3</button>
-          <span>Çok İyi</span>
-        </div>
-      </div>
-      <div className="fpItem">
-        <img
-          src="https://t-cf.bstatic.com/xdata/images/hotel/square200/177954582.webp?k=d67fb9245e8cf926fc217ffdfa86be220d76728e4c2f3e72b904639e705da70a&o=&s=1"
-          alt=""
-          className="fpItemImg"
-        />
-        <span className="fpItemName">Eden Hotel Amsterdam</span>
-        <span className="fpItemCity">Amsterdam</span>
-        <span className="fpItemPrice">Başlangıç fiyatı - 1.754 ₺</span>
-        <div className="fpItemRating">
-          <button>8.3</button>
-          <span>Çok İyi</span>
-        </div>
-      </div>
+      {isPending ? (
+        "Yükleniyor..."
+      ) : (
+        <>
+          {data.map((item) => (
+            <div className="fpItem" key={item._id}>
+              <img
+                src="https://t-cf.bstatic.com/xdata/images/hotel/square200/177954582.webp?k=d67fb9245e8cf926fc217ffdfa86be220d76728e4c2f3e72b904639e705da70a&o=&s=1"
+                alt=""
+                className="fpItemImg"
+              />
+              <span className="fpItemName">{item.title}</span>
+              <span className="fpItemCity">{item.city}</span>
+              <span className="fpItemPrice">Başlangıç fiyatı - {item.cheapestPrice} ₺</span>
+              <div className="fpItemRating">
+                <button>{item.rating}</button>
+                <span>Çok İyi</span>
+              </div>
+            </div>
+          ))}
+        </>
+      )}
     </div>
   );
 }

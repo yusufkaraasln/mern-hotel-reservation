@@ -6,6 +6,8 @@ import "./list.scss";
 import { format } from "date-fns";
 import { DateRange } from "react-date-range";
 import SearchItem from "../components/searchItem/SearchItem";
+import useFetch from "../hooks/useFetch";
+
 function List() {
   const location = useLocation();
   const [destination, setDestination] = React.useState(
@@ -14,7 +16,16 @@ function List() {
   const [date, setDate] = React.useState(location.state.date);
   const [options, setOptions] = React.useState(location.state.options);
   const [openDate, setOpenDate] = React.useState(false);
-  console.log(location);
+  const [max, setMax] = React.useState(undefined);
+  const [min, setMin] = React.useState(undefined);
+
+  const { data, isPending, error, reFetch } = useFetch(
+     `/hotels/?city=${destination}&min=${min || 1 }&max=${max || 9999999}`
+  );
+  const handleClick = () => {
+    reFetch();
+  };
+
   return (
     <div>
       <Navbar />
@@ -46,72 +57,74 @@ function List() {
               <div className="listContainerWrapperSearchItem">
                 <label htmlFor="">Seçenekler</label>
                 <div className="listContainerWrapperSearchItemOption">
-
-                <div className="listContainerWrapperSearchItemOptionItem">
-                  <span className="listContainerWrapperSearchItemOptionItemText">
-                    En düşük fiyat <small>bir gecelik</small>
-                  </span>
-                  <input
-                    type="number"
-                    className="listContainerWrapperSearchItemOptionItemInput"
-                  />
-                </div>
-                <div className="listContainerWrapperSearchItemOptionItem">
-                  <span className="listContainerWrapperSearchItemOptionItemText">
-                    En yüksek fiyat <small>bir gecelik</small>
-                  </span>
-                  <input
-                    type="number"
-                    className="listContainerWrapperSearchItemOptionItemInput"
-                  />
-                </div>
-                <div className="listContainerWrapperSearchItemOptionItem">
-                  <span className="listContainerWrapperSearchItemOptionItemText">
-                    Yetişkin
-                  </span>
-                  <input
-                    type="number"
-                    placeholder={options.adult}
-                    min={1}
-                    className="listContainerWrapperSearchItemOptionItemInput"
-                  />
-                </div>
-                <div className="listContainerWrapperSearchItemOptionItem">
-                  <span className="listContainerWrapperSearchItemOptionItemText">
-                    Çocuk
-                  </span>
-                  <input
-                    type="number"
-                    min={0}
-                    placeholder={options.children}
-                    className="listContainerWrapperSearchItemOptionItemInput"
-                  />
-                </div>
-                <div className="listContainerWrapperSearchItemOptionItem">
-                  <span className="listContainerWrapperSearchItemOptionItemText">
-                    Oda
-                  </span>
-                  <input
-                    placeholder={options.room}
-                    min={1}
-                    type="number"
-                    className="listContainerWrapperSearchItemOptionItemInput"
-                  />
-                </div>
-
+                  <div className="listContainerWrapperSearchItemOptionItem">
+                    <span className="listContainerWrapperSearchItemOptionItemText">
+                      En düşük fiyat <small>bir gecelik</small>
+                    </span>
+                    <input
+                      onChange={(e) => setMin(e.target.value)}
+                      type="number"
+                      className="listContainerWrapperSearchItemOptionItemInput"
+                    />
+                  </div>
+                  <div className="listContainerWrapperSearchItemOptionItem">
+                    <span className="listContainerWrapperSearchItemOptionItemText">
+                      En yüksek fiyat <small>bir gecelik</small>
+                    </span>
+                    <input
+                      onChange={(e) => setMax(e.target.value)}
+                      type="number"
+                      className="listContainerWrapperSearchItemOptionItemInput"
+                    />
+                  </div>
+                  <div className="listContainerWrapperSearchItemOptionItem">
+                    <span className="listContainerWrapperSearchItemOptionItemText">
+                      Yetişkin
+                    </span>
+                    <input
+                      type="number"
+                      placeholder={options.adult}
+                      min={1}
+                      className="listContainerWrapperSearchItemOptionItemInput"
+                    />
+                  </div>
+                  <div className="listContainerWrapperSearchItemOptionItem">
+                    <span className="listContainerWrapperSearchItemOptionItemText">
+                      Çocuk
+                    </span>
+                    <input
+                      type="number"
+                      min={0}
+                      placeholder={options.children}
+                      className="listContainerWrapperSearchItemOptionItemInput"
+                    />
+                  </div>
+                  <div className="listContainerWrapperSearchItemOptionItem">
+                    <span className="listContainerWrapperSearchItemOptionItemText">
+                      Oda
+                    </span>
+                    <input
+                      placeholder={options.room}
+                      min={1}
+                      type="number"
+                      className="listContainerWrapperSearchItemOptionItemInput"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-            <button>Ara</button>
+            <button onClick={handleClick}>Ara</button>
           </div>
           <div className="listContainerWrapperResult">
-            <SearchItem/>
-            <SearchItem/>
-            <SearchItem/>
-            <SearchItem/>
-            <SearchItem/>
-            <SearchItem/>
-            <SearchItem/>
+            {isPending ? (
+              "Yükleniyor..."
+            ) : (
+              <>
+                {data.map((item) => (
+                  <SearchItem item={item} key={item._id} />
+                ))}
+              </>
+            )}
           </div>
         </div>
       </div>

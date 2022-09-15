@@ -1,8 +1,11 @@
+const cookieParser = require("cookie-parser");
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+const cors = require("cors");
 require("dotenv").config()
 
+app.use(cookieParser())
 const connect = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URL, {
@@ -18,8 +21,9 @@ const connect = async () => {
 
  
  
-
+app.use(cors())
 app.use(express.json());
+
 
 connect();
 
